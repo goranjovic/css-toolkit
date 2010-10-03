@@ -3,3 +3,6 @@ syntax: glob
 target
 *.swp
 *.orig
+.project
+.classpath
+.settings
