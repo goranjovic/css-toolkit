@@ -20,6 +20,7 @@ package org.goranjovic.css.dom;
 
 public enum SelectorType {
 	
+	GLOBAL,
 	TAG,
 	ID
 

@@ -78,7 +78,10 @@ public class Parser {
 			List<Selector> selectorList = new LinkedList<Selector>();
 			for (String name : selectors) {
 				Selector s = new Selector();
-				if (name.startsWith("#")) {
+				if (name.equals("*")){
+					s.setName("*");
+					s.setType(SelectorType.GLOBAL);
+				}else if (name.startsWith("#")) {
 					s.setType(SelectorType.ID);
 					s.setName(name.substring(1));
 				} else {

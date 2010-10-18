@@ -25,6 +25,7 @@ public class StyleSheet {
 	
 	private List<Selector> idSelectors = new LinkedList<Selector>();
 	private List<Selector> tagSelectors = new LinkedList<Selector>();
+	private List<Selector> globalSelectors = new LinkedList<Selector>();
 
 
 	
@@ -45,12 +46,26 @@ public class StyleSheet {
 			idSelectors.add(selector);
 		}else if(selector.getType()==SelectorType.TAG){
 			tagSelectors.add(selector);
+		}else if(selector.getType()==SelectorType.GLOBAL){
+			globalSelectors.add(selector);
 		}
 	}
 	
-	public String findValueForTag(String tagName, String property){
-		for(Selector s : tagSelectors){
-			if(s.getName().equals(tagName)){
+	private String findValueForGlobal(String property){
+		return findValue("*", property, globalSelectors);
+	}
+	
+	private String findValueForTag(String tagName, String property){
+		return findValue(tagName, property, tagSelectors);
+	}
+	
+	private String findValueForId(String id, String property){
+		return findValue(id, property, idSelectors);
+	}
+	
+	public String findValue(String identifier, String property, List<Selector> selectors){
+		for(Selector s : selectors){
+			if(s.getName().equals(identifier)){
 				for(Declaration r : s.getDeclarations()){
 					if(r.getProperty().getName().equals(property)){
 						return r.getValue().getValue();
@@ -61,28 +76,19 @@ public class StyleSheet {
 		return null;
 	}
 	
-	public String findValueForId(String id, String property){
-		for(Selector s : idSelectors){
-			if(s.getName().equals(id)){
-				for(Declaration r : s.getDeclarations()){
-					if(r.getProperty().getName().equals(property)){
-						return r.getValue().getValue();
-					}
-				}
-			}
-		}
-		return null;
-	}
-	
-	public String findValue(String identifier, String property, SelectorType type){
-		if(type == SelectorType.TAG){
-			return findValueForTag(identifier, property);
-		}else if(type == SelectorType.ID){
-			return findValueForId(identifier, property);
-		}else{
-			return null;
+	public String findValue(String id, String tagName, String property){
+		
+		String value = findValueForId(id, property);
+		if(value != null){
+			return value;
 		}
 		
+		value = findValueForTag(tagName, property);
+		if(value != null){
+			return value;
+		}
+		
+		return findValueForGlobal(property);
 	}
 
 }
